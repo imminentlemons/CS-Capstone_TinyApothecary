@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: PhantomPotion_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 856f63c55413135409f3ed6ef2039c63, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: 32021aeac46bb3c45b9ecff3f51356fa, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 04bac81560379524fbce60e941b4e482, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 9869067684341a74cb29bedddb8177fe, type: 2}
+    amount: 1
+  brewDuration: 7
+  brewingCauldronSprite: {fileID: 3239603501409749765, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

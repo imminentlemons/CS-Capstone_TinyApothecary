@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Sun_Seed
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Sun Blossom Seed
+  flavorText: A bright flower that stores sunlight.
+  icon: {fileID: -2384419724124449323, guid: 42f3934a810c7454a8be11249966bf7a, type: 3}
+  itemType: 1
+  cropToGrow: {fileID: 11400000, guid: d26565127615fae4db9ad61a94405cf4, type: 2}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: 2dd929be730bf2d428c4c7ae85471f2f, type: 2}
+  sproutTile: {fileID: 11400000, guid: 0055b1312a6779c43a568a52e3a27444, type: 2}
+  matureTile: {fileID: 11400000, guid: c02e4aea361f62b46b87bb25a059ffff, type: 2}
+  adultTile: {fileID: 11400000, guid: a64cce9860801bc4f8e58a5c92bf69c5, type: 2}
+  price: 5

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Inkcap_Seed
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Ink Cap Seed
+  flavorText: A dark mushroom that stains like ink.
+  icon: {fileID: 2376755787977072625, guid: 42f3934a810c7454a8be11249966bf7a, type: 3}
+  itemType: 1
+  cropToGrow: {fileID: 11400000, guid: 32021aeac46bb3c45b9ecff3f51356fa, type: 2}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: 6459e5c7abddfa04cbcea2d66933a8a6, type: 2}
+  sproutTile: {fileID: 11400000, guid: 6be5b7346f4e82e4883e5f7f82b3b9e5, type: 2}
+  matureTile: {fileID: 11400000, guid: d4a97162affb91d41b4a2cb8f14f1bd8, type: 2}
+  adultTile: {fileID: 11400000, guid: 046c334fcc4107944a4b5285011894c7, type: 2}
+  price: 6

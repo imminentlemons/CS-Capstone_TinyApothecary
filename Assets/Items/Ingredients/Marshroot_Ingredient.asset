@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Marshroot_Ingredient
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Marshroot
+  icon: {fileID: -843232475, guid: 4619a823d703b5e41b9194f96bbd4abf, type: 3}
+  itemType: 0
+  cropToGrow: {fileID: 0}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: f43c6a1d1af670f40901d568d29d8c77, type: 2}
+  sproutTile: {fileID: 11400000, guid: 1c0afc582918ec745a8e4169c9c86b05, type: 2}
+  matureTile: {fileID: 11400000, guid: 7b6c8f2aef81ec448abfb5fe30800f93, type: 2}
+  adultTile: {fileID: 11400000, guid: 420e19406f0072d43922f4299b75afc1, type: 2}

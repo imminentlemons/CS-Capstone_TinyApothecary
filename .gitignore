@@ -1,0 +1,51 @@
+# Unity-generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Bb]uild/
+[Bb]uilds/
+ExportedObj/
+.gradle/
+
+# Unity recovery files
+[Aa]ssets/_Recovery/
+[Aa]ssets/_Recovery.meta
+
+# Visual Studio and IDE-generated files
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.opendb
+*.VC.db
+
+# Debug symbols and temporary files
+*.pdb
+*.mdb
+*.tmp
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Generated builds/packages
+*.apk
+*.aab
+*.unitypackage

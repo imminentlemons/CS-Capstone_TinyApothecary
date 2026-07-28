@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: HealingBrew_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 0b69f0421b1013140950e778a6bf9a33, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: d26565127615fae4db9ad61a94405cf4, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 4d287401a0e3a7949b8363b3e363ce59, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: d4304d5a4841b0e4f819a1c191af3fc3, type: 2}
+    amount: 1
+  brewDuration: 7
+  brewingCauldronSprite: {fileID: -7982070283306953880, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

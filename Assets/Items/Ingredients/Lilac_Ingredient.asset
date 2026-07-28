@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Lilac_Ingredient
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Lilac
+  icon: {fileID: -1625309947, guid: 38bb08a2bf9e6c6478ebf8b23ca083fa, type: 3}
+  itemType: 0
+  cropToGrow: {fileID: 0}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: 33f1f81e7acd33540b5a7c077cd86d8e, type: 2}
+  sproutTile: {fileID: 11400000, guid: 396cfedefd0fb904a9e735a34773d6dc, type: 2}
+  matureTile: {fileID: 11400000, guid: 396cfedefd0fb904a9e735a34773d6dc, type: 2}
+  adultTile: {fileID: 11400000, guid: 0a958db96d2b79145a49f284cb67b5fa, type: 2}

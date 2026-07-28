@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Lucky_Clover_Brew
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Lucky Clover Brew
+  flavorText: A shimmering teal brew said to atteact fortunate outcomes. Whether
+    it truly works is still debated.
+  icon: {fileID: -4828955206877436067, guid: 712890eeb71e52942b1549d051393205, type: 3}
+  itemType: 2
+  cropToGrow: {fileID: 0}
+  toolType: 0
+  wateredSeedTile: {fileID: 0}
+  seedlingTile: {fileID: 0}
+  sproutTile: {fileID: 0}
+  matureTile: {fileID: 0}
+  adultTile: {fileID: 0}
+  price: 20

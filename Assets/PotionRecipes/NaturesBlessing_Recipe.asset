@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: NaturesBlessing_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 81a24929a4a462c428b9698b0c323cef, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: d4304d5a4841b0e4f819a1c191af3fc3, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: d26565127615fae4db9ad61a94405cf4, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 3ab72e1d2aa8e3e49a8e69223b28ac36, type: 2}
+    amount: 1
+  brewDuration: 5
+  brewingCauldronSprite: {fileID: -321654517022250315, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: DreamDraught_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 52aefbabdf83eb2478675e8298e14418, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: b20b8ffe30fef7b4baca918c7e612db3, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 3ab72e1d2aa8e3e49a8e69223b28ac36, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 9869067684341a74cb29bedddb8177fe, type: 2}
+    amount: 1
+  brewDuration: 5
+  brewingCauldronSprite: {fileID: 4685299247760092864, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

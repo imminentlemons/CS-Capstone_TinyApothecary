@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Star_Seed
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Starberry Seed
+  flavorText: A sparkling berry said to hold starlight.
+  icon: {fileID: -349939199, guid: 4619a823d703b5e41b9194f96bbd4abf, type: 3}
+  itemType: 1
+  cropToGrow: {fileID: 11400000, guid: b20b8ffe30fef7b4baca918c7e612db3, type: 2}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: bbff993b458e3a44e9e3a7021b7c108b, type: 2}
+  sproutTile: {fileID: 11400000, guid: 0be3ef80a60d1ad4d81ddbb6b6fe6477, type: 2}
+  matureTile: {fileID: 11400000, guid: 573c62e298042744ea06791644240329, type: 2}
+  adultTile: {fileID: 11400000, guid: 5b525bfc33e340445a89fb8c6cff5e54, type: 2}
+  price: 5

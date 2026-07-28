@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: MoonEyeElixer_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 2c80b3ada8e66b34d9e1cd5b104d1a24, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: 32021aeac46bb3c45b9ecff3f51356fa, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 8690744cce72f6548acb354b18799ae6, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 3ab72e1d2aa8e3e49a8e69223b28ac36, type: 2}
+    amount: 1
+  brewDuration: 6
+  brewingCauldronSprite: {fileID: -3125995932906347599, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

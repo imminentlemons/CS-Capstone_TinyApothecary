@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953df7752de242748afc9b4c939455f8, type: 3}
+  m_Name: TitanTonic_Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::PotionRecipe
+  potion: {fileID: 11400000, guid: 23776e9d964cd3841a6cd5c22fe4a661, type: 2}
+  ingredients:
+  - ingredient: {fileID: 11400000, guid: 39d47166a6f39924397a3d9dedb915ad, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: d26565127615fae4db9ad61a94405cf4, type: 2}
+    amount: 1
+  - ingredient: {fileID: 11400000, guid: 643e8c3e1b3dd5147ac110f41efa672a, type: 2}
+    amount: 1
+  brewDuration: 8
+  brewingCauldronSprite: {fileID: -8875915737647682146, guid: c17bbf67ebe19ba4e95d8dc6d8bfb4bc, type: 3}

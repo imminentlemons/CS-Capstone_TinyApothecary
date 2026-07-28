@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1eed05fa3ee2b4d82a0b466778c9d7, type: 3}
+  m_Name: Rose_Seed
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  itemName: Rose Seed
+  flavorText: Sweet floral petals that soothe the mind.
+  icon: {fileID: 1096276138, guid: 4619a823d703b5e41b9194f96bbd4abf, type: 3}
+  itemType: 1
+  cropToGrow: {fileID: 11400000, guid: 4d287401a0e3a7949b8363b3e363ce59, type: 2}
+  toolType: 0
+  wateredSeedTile: {fileID: 11400000, guid: d5134a851a0187e409d5c9b0dd7aaf81, type: 2}
+  seedlingTile: {fileID: 11400000, guid: de4ba23de8af3cd43b1a2d343d04c784, type: 2}
+  sproutTile: {fileID: 11400000, guid: 6b961efea76101a48b9635b5c676627c, type: 2}
+  matureTile: {fileID: 11400000, guid: b9546baff1468634f80ecf4281c6c61d, type: 2}
+  adultTile: {fileID: 11400000, guid: 39d37c53dc87fc74ca1139accd369a14, type: 2}
+  price: 3
