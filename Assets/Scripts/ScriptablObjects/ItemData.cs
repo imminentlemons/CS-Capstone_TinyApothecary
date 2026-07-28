@@ -39,6 +39,7 @@ public class ItemData : ScriptableObject
     {
         None,
         Hoe,
-        WateringCan
+        WateringCan,
+        Axe
     }
 }

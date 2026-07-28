@@ -8,17 +8,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1609843038750488039, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: m_Size.x
+      value: 0.77256596
+      objectReference: {fileID: 0}
+    - target: {fileID: 1609843038750488039, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: m_Size.y
+      value: 0.9617264
+      objectReference: {fileID: 0}
+    - target: {fileID: 1609843038750488039, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.00060504675
+      objectReference: {fileID: 0}
+    - target: {fileID: 1609843038750488039, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.019136786
+      objectReference: {fileID: 0}
+    - target: {fileID: 2420639422662667709, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 7408159941551875341}
+    - target: {fileID: 2420639422662667709, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: inventoryManager
+      value: 
+      objectReference: {fileID: 7599156490967511429}
     - target: {fileID: 2420639422662667709, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
       propertyPath: inventory.slots.Array.size
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2994022534379908193, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6
+      value: -7.68
       objectReference: {fileID: 0}
     - target: {fileID: 2994022534379908193, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: -0.11
       objectReference: {fileID: 0}
     - target: {fileID: 2994022534379908193, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
       propertyPath: m_LocalPosition.z
@@ -52,6 +76,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3860882355846017728, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4495701230222521646, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
       propertyPath: m_DefaultControlScheme
       value: Keyboard
@@ -67,5 +95,49 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5723389030355616841, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7599156490967511429}
   m_SourcePrefab: {fileID: 100100000, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+--- !u!1 &475983535886134913 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5723389030355616841, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+  m_PrefabInstance: {fileID: 5329596187879910088}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7599156490967511429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475983535886134913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ea84848d01853747830a2d7b51a6ff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  inventoryUI: {fileID: 0}
+  backpack:
+    slots: []
+    selectedSlot:
+      itemName: 
+      count: 0
+      maxAllowed: 10
+      icon: {fileID: 0}
+    selectedSlotIndex: 0
+  backpackSlotCount: 10
+  toolbar:
+    slots: []
+    selectedSlot:
+      itemName: 
+      count: 0
+      maxAllowed: 10
+      icon: {fileID: 0}
+    selectedSlotIndex: 0
+  toolbarSlotCount: 7
+--- !u!95 &7408159941551875341 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3402915137133334469, guid: d322b265925ab654f9d12e1b9ac20196, type: 3}
+  m_PrefabInstance: {fileID: 5329596187879910088}
+  m_PrefabAsset: {fileID: 0}

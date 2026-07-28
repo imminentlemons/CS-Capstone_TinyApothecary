@@ -8,6 +8,12 @@ public class Player : MonoBehaviour
     [Header("Water Effect")]
     [SerializeField] private WaterSplashEffect waterSplashPrefab;
 
+    [Header("Combat")]
+    [SerializeField, Min(1)] private int axeDamage = 1;
+    [SerializeField, Min(0.1f)] private float axeRange = 0.55f;
+    [SerializeField, Min(0)] private float axeForwardOffset = 0.65f;
+    [SerializeField] private LayerMask enemyLayer;
+
     private Vector3Int pendingWaterPosition;
     private Vector2 pendingWaterDirection;
     private bool hasPendingWater;
@@ -22,6 +28,9 @@ public class Player : MonoBehaviour
     public PotionBook_UI potionBookUI;
 
     private PlayerMovement movement;
+
+    private Vector2 pendingAxeDirection;
+    private bool hasPendingAxeAttack;
 
     private Vector2 facingDirection = Vector2.down;
     private Vector3Int pendingPlowPosition;
@@ -135,6 +144,27 @@ public class Player : MonoBehaviour
                     return;
                 }
 
+                Inventory.Slot selectedSlot =
+                    inventoryManager.toolbar.selectedSlot;
+
+                Item selectedItem = null;
+
+                if(selectedSlot != null &&
+                    !string.IsNullOrEmpty(selectedSlot.itemName))
+                {
+                    selectedItem =
+                        GameManager.instance.itemManager.GetItemByName(
+                            selectedSlot.itemName);
+                }
+
+                if(selectedItem != null &&
+                    selectedItem.data != null &&
+                    selectedItem.data.toolType == ItemData.ToolType.Axe)
+                {
+                    BeginAxeAttack(direction);
+                    return;
+                }
+
 
                 if (!tileManager.IsFarmTile(position))
                 {
@@ -161,16 +191,7 @@ public class Player : MonoBehaviour
                     }
 
                     return;
-                }
-
-                Inventory.Slot selectedSlot = inventoryManager.toolbar.selectedSlot;
-
-                if (selectedSlot == null || string.IsNullOrEmpty(selectedSlot.itemName))
-                {
-                    return;
-                }
-
-                Item selectedItem = GameManager.instance.itemManager.GetItemByName(selectedSlot.itemName);
+                }                
 
                 if(selectedItem ==  null)
                 {
@@ -253,6 +274,28 @@ public class Player : MonoBehaviour
             }              
 
         }
+    }
+
+    private void BeginAxeAttack(Vector2 direction)
+    {
+        if (direction == Vector2.zero)
+        {
+            direction = Vector2.down;
+        }
+
+        direction.Normalize();
+
+        animator.SetFloat("LastMoveX", direction.x);
+        animator.SetFloat("LastMoveY", direction.y);
+
+        pendingAxeDirection = direction;
+        hasPendingAxeAttack = true;
+        isUsingTool = true;
+
+        movement.SetMovementLocked(true);
+        tileManager.ClearHighlight();
+
+        animator.SetTrigger("Axe");
     }
        
     public void DropItem(Item item)
@@ -386,10 +429,38 @@ public class Player : MonoBehaviour
         hasPendingWater = false;
     }
 
+    public void ApplyPendingAxeDamage()
+    {
+        if(!hasPendingAxeAttack)
+        {
+            return;
+        }
+
+        Vector2 attackCenter = (Vector2)transform.position +
+            pendingAxeDirection * axeForwardOffset;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackCenter, axeRange, enemyLayer);
+
+        foreach (Collider2D hit in hits)
+        {
+            EnemyHealth enemy =
+                hit.GetComponentInParent<EnemyHealth>();
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(axeDamage);
+                break;
+            }
+        }
+
+        hasPendingAxeAttack = false;
+    }
+
     public void FinishToolAnimation()
     {
         hasPendingPlow = false;
         hasPendingWater = false;
+        hasPendingAxeAttack = false;
         isUsingTool = false;
 
         if (movement != null)
