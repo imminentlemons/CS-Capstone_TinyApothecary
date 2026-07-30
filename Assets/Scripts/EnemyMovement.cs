@@ -1,16 +1,20 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float moveSpeed = 1.25f;
     [SerializeField, Min(0f)] private float stoppingDistance = 0.45f;
 
-    private Rigidbody2D rb;
-    private Transform target;
+    private Rigidbody2D rb;    
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+
+    private Transform target;
+    private Vector2 destination;
+    private bool hasDestination;
+
+    public bool HasReachedTarget { get; private set; }
 
     private void Awake()
     {
@@ -19,35 +23,60 @@ public class EnemyMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    private void Start()
+    public void SetTarget(Transform newTarget)
     {
-        FindPlayerTwo();
+        target = newTarget;
+        hasDestination = false;
+        HasReachedTarget = false;
+    }
+
+    public void SetDestination(Vector2 newDestination)
+    {
+        target = null;
+        destination = newDestination;
+        hasDestination = true;
+        HasReachedTarget = false;
     }
 
     private void FixedUpdate()
     {
-        if( target == null)
+        Vector2 targetPosition;
+
+        if (target != null)
         {
-            FindPlayerTwo();
+            targetPosition = target.position;
+        }
+        else if(hasDestination)
+        {
+            targetPosition = destination;
+        }
+        else
+        {
             SetMoving(false);
             return;
         }
 
-        Vector2 offset = (Vector2)target.position - rb.position;
+        Vector2 offset = targetPosition - rb.position;
 
-        if(offset.sqrMagnitude <= stoppingDistance * stoppingDistance)
+        if (offset.sqrMagnitude <=
+            stoppingDistance * stoppingDistance)
         {
+            HasReachedTarget = true;
             SetMoving(false);
             return;
         }
+
+        HasReachedTarget = false;
 
         Vector2 direction = offset.normalized;
 
-        Vector2 nextPosition = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
+        Vector2 nextPosition =
+            rb.position +
+            direction * moveSpeed * Time.fixedDeltaTime;
 
         SetMoving(true);
 
-        if(spriteRenderer != null &&
+        if (spriteRenderer != null &&
             Mathf.Abs(direction.x) > 0.01f)
         {
             spriteRenderer.flipX = direction.x < 0f;
@@ -57,29 +86,10 @@ public class EnemyMovement : MonoBehaviour
     }
 
     private void SetMoving(bool moving)
-
-        {
-        if(animator != null)
+    {
+        if (animator != null)
         {
             animator.SetBool("IsMoving", moving);
-        }
-
-   }
-    private void FindPlayerTwo()
-    {
-        Player[] players =
-            FindObjectsByType<Player>(FindObjectsSortMode.None);
-
-        foreach (Player player in players)
-        {
-            if (player.toolbarUI != null &&
-                player.toolbarUI.inputType ==
-                Toolbar_UI.InputType.Gamepad)
-            {
-                target = player.transform;
-
-                return;
-            }
         }
     }
 }

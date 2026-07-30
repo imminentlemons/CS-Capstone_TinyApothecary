@@ -4,7 +4,7 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     [Header("Customer")]
-    [SerializeField] private Customer customerPrefab;
+    [SerializeField] private Customer[] customerPrefabs;
     [SerializeField] private Transform[] customerPath;
 
     [Header("Dependencies")]
@@ -15,6 +15,9 @@ public class CustomerSpawner : MonoBehaviour
     [Header("Timing")]
     [SerializeField] private float minimumSpawnDelay = 3f;
     [SerializeField] private float maximumSpawnDelay = 8f;
+
+    [SerializeField]
+    private DailyStats dailyStats;
 
     private Customer activeCustomer;
     private Coroutine spawnRoutine;
@@ -70,8 +73,9 @@ public class CustomerSpawner : MonoBehaviour
 
     private void SpawnCustomer()
     {
-        if(activeCustomer != null ||
-            customerPrefab == null ||
+        if (activeCustomer != null ||
+            customerPrefabs == null ||
+            customerPrefabs.Length == 0 ||
             customerPath == null ||
             customerPath.Length == 0 ||
             customerPath[0] == null ||
@@ -82,10 +86,25 @@ public class CustomerSpawner : MonoBehaviour
             return;
         }
 
+        Customer selectedPrefab =
+            customerPrefabs[
+                Random.Range(0, customerPrefabs.Length)
+            ];
+
+        if (selectedPrefab == null)
+        {
+            Debug.LogWarning(
+                "Customer prefab array contains an empty slot."
+            );
+
+            return;
+        }
+
         activeCustomer = Instantiate(
-            customerPrefab,
+            selectedPrefab,
             customerPath[0].position,
-            customerPath[0].rotation);
+            customerPath[0].rotation
+        );
 
         activeCustomer.ArrivedAtCounter +=
             HandleCustomerArrived;
@@ -93,8 +112,13 @@ public class CustomerSpawner : MonoBehaviour
         activeCustomer.Finished +=
             HandleCustomerFinished;
 
+        activeCustomer.Resolved +=
+            HandleCustomerResolved;
+
         activeCustomer.Initialize(
-            shopFunds, customerPath);
+            shopFunds,
+            customerPath
+        );
     }
 
     private void HandleCustomerArrived(Customer customer)
@@ -113,6 +137,8 @@ public class CustomerSpawner : MonoBehaviour
         
         customer.Finished -= HandleCustomerFinished;
 
+        customer.Resolved -= HandleCustomerResolved;
+
         if(activeCustomer == customer)
         {
             activeCustomer = null;
@@ -126,6 +152,14 @@ public class CustomerSpawner : MonoBehaviour
             StartSpawning(delay);
         }
         
+    }
+
+    private void HandleCustomerResolved( Customer customer, Customer.CustomerOutcome outcome, float satisfaction)
+    {
+        if(dailyStats != null)
+        {
+            dailyStats.RecordCustomerResult(outcome, satisfaction);
+        }
     }
 
     private void HandleShopOpened()
@@ -169,6 +203,9 @@ public class CustomerSpawner : MonoBehaviour
 
             activeCustomer.Finished -=
                 HandleCustomerFinished;
+            
+            activeCustomer.Resolved -=
+                HandleCustomerResolved;
         }
     }
 }

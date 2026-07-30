@@ -187,7 +187,7 @@ public class TileManager : MonoBehaviour
 
     public bool Water(Vector3Int position)
     {
-        if(!farmTiles.ContainsKey(position))
+        if (!farmTiles.ContainsKey(position))
         {
             return false;
         }
@@ -197,16 +197,34 @@ public class TileManager : MonoBehaviour
             return false;
         }
 
+        bool isFirstWatering =
+            !cropStages.ContainsKey(position);
+
         farmTiles[position] = FarmState.Watered;
 
-        cropStages[position] = GrowthStage.WateredSeed;
+        if (isFirstWatering)
+        {
+            cropStages[position] =
+                GrowthStage.WateredSeed;
+        }
 
+        // Starts or restarts growth from its current stage.
         growthTimers[position] = 3f;
 
-        interactableMap.SetTile(position, wateredTile);
+        interactableMap.SetTile(
+            position,
+            wateredTile
+        );
 
-        cropMap.SetTile(position, plantedCrops[position].wateredSeedTile);
-
+        if (isFirstWatering ||
+            cropStages[position] ==
+            GrowthStage.WateredSeed)
+        {
+            cropMap.SetTile(
+                position,
+                plantedCrops[position].wateredSeedTile
+            );
+        }
 
         Debug.Log("Crop Watered");
 
@@ -236,6 +254,117 @@ public class TileManager : MonoBehaviour
         return true;
     }
 
+    private bool CanDamageCrop(Vector3Int position)
+    {
+        if (!farmTiles.TryGetValue(
+                position,
+                out FarmState state))
+        {
+            return false;
+        }
+
+        bool validState =
+            state == FarmState.Watered ||
+            state == FarmState.Ready;
+
+        return validState &&
+               cropStages.ContainsKey(position) &&
+               plantedCrops.ContainsKey(position);
+    }
+
+    public bool TryGetRandomDamageableCrop(out Vector3Int position)
+    {
+        position = default;
+
+        List<Vector3Int> eligibleCrops =
+            new List<Vector3Int>();
+
+        foreach (var crop in farmTiles)
+        {
+            if (CanDamageCrop(crop.Key))
+            {
+                eligibleCrops.Add(crop.Key);
+            }
+        }
+
+        if (eligibleCrops.Count == 0)
+        {
+            return false;
+        }
+
+        position =
+            eligibleCrops[
+                Random.Range(0, eligibleCrops.Count)
+            ];
+
+        return true;
+    }
+
+    public bool DamageCrop(Vector3Int position)
+    {
+        if (!CanDamageCrop(position))
+        {
+            return false;
+        }
+
+        ItemData cropData = plantedCrops[position];
+
+        GrowthStage previousStage =
+            cropStages[position];
+
+        GrowthStage damagedStage =
+            previousStage;
+
+        TileBase damagedSprite =
+            cropMap.GetTile(position);
+
+        switch (previousStage)
+        {
+            case GrowthStage.Adult:
+                damagedStage = GrowthStage.Mature;
+                damagedSprite = cropData.matureTile;
+                break;
+
+            case GrowthStage.Mature:
+                damagedStage = GrowthStage.Sprout;
+                damagedSprite = cropData.sproutTile;
+                break;
+
+            case GrowthStage.Sprout:
+                damagedStage = GrowthStage.Seedling;
+                damagedSprite = cropData.seedlingTile;
+                break;
+
+            case GrowthStage.Seedling:
+            case GrowthStage.WateredSeed:
+                damagedStage = GrowthStage.WateredSeed;
+                damagedSprite = plantedSeedTile;
+                break;
+        }
+
+        cropStages[position] = damagedStage;
+        farmTiles[position] = FarmState.Growing;
+
+        growthTimers.Remove(position);
+
+        interactableMap.SetTile(
+            position,
+            plantedSeedTile
+        );
+
+        cropMap.SetTile(
+            position,
+            damagedSprite
+        );
+
+        Debug.Log(
+            $"Enemy damaged crop at {position}: " +
+            $"{previousStage} -> {damagedStage}."
+        );
+
+        return true;
+    }
+
     public void HighlightTile(Vector3Int position)
     {
         highlightMap.ClearAllTiles();
@@ -251,7 +380,6 @@ public class TileManager : MonoBehaviour
     {
         highlightMap.ClearAllTiles();
     }
-
 
     public string GetTileName(Vector3Int position)
     {
@@ -272,4 +400,5 @@ public class TileManager : MonoBehaviour
     {
         return interactableMap.GetCellCenterWorld(position);
     }
+
 }

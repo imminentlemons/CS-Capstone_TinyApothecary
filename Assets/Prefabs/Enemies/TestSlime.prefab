@@ -11,11 +11,12 @@ GameObject:
   - component: {fileID: 442565181436182378}
   - component: {fileID: 2245497979638855759}
   - component: {fileID: 5246335910687068714}
-  - component: {fileID: 4323040237571946561}
   - component: {fileID: 3680611033053650417}
-  - component: {fileID: 1336169958868305247}
-  - component: {fileID: 2243761458603377512}
   - component: {fileID: 6214439103817840341}
+  - component: {fileID: 4323040237571946561}
+  - component: {fileID: 1336169958868305247}
+  - component: {fileID: 3779911945366517754}
+  - component: {fileID: 2243761458603377512}
   m_Layer: 3
   m_Name: TestSlime
   m_TagString: Untagged
@@ -143,19 +144,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.625, y: 0.4375}
   m_EdgeRadius: 0
---- !u!114 &4323040237571946561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5722866401292988159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 848352781531d0348a30bef1fa859e3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHealth: 3
 --- !u!50 &3680611033053650417
 Rigidbody2D:
   serializedVersion: 5
@@ -183,33 +171,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &1336169958868305247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5722866401292988159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 773ff043d540b5f43963c0b331084e54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  moveSpeed: 1.25
-  stoppingDistance: 0.2
---- !u!114 &2243761458603377512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5722866401292988159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66b17c14bddb9dc46915b7836df4193c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyContactDamage
-  contactDamage: 1
 --- !u!95 &6214439103817840341
 Animator:
   serializedVersion: 7
@@ -232,3 +193,64 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4323040237571946561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722866401292988159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848352781531d0348a30bef1fa859e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 3
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 0.35}
+  hitFlashDuration: 0.12
+--- !u!114 &1336169958868305247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722866401292988159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 773ff043d540b5f43963c0b331084e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  moveSpeed: 1.25
+  stoppingDistance: 0.2
+--- !u!114 &3779911945366517754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722866401292988159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4034f74140512544f98fd5f7f40c336b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyGardenAttack
+  attackDuration: 2.5
+  wanderRadius: 2
+--- !u!114 &2243761458603377512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722866401292988159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b17c14bddb9dc46915b7836df4193c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyContactDamage
+  contactDamage: 1
+  attackWindup: 0.5
+  attackRecovery: 0.25
+  attackCooldown: 0.75

@@ -59,6 +59,8 @@ public class Customer : MonoBehaviour
     
     public event Action<Customer, CustomerOutcome, float> Finished;
 
+    public event Action<Customer, CustomerOutcome, float> Resolved;
+
     public CustomerOrder CurrentOrder { get; private set; }
 
     public bool HasOrder => CurrentOrder != null;
@@ -217,6 +219,7 @@ public class Customer : MonoBehaviour
         departureOutcome = outcome;
         departureSatisfaction = satisfaction;
         currentState = CustomerState.Leaving;
+        Resolved?.Invoke(this, outcome, satisfaction);
 
         if(orderBubble != null)
         {
