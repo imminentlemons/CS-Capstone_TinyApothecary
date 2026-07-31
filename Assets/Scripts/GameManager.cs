@@ -18,9 +18,7 @@ public class GameManager : MonoBehaviour
         else
         {
             instance = this;
-        }
-
-        DontDestroyOnLoad(this.gameObject);
+        }        
 
         itemManager = GetComponent<ItemManager>();
         tileManager = GetComponent<TileManager>();

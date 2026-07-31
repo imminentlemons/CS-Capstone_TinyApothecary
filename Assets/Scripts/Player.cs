@@ -74,10 +74,18 @@ public class Player : MonoBehaviour
                 return;
             }
 
+            // Modal panels and shops lock movement. Do not let the same button
+            // also trigger a world interaction behind the open panel.
+            if ((inventoryUI != null && inventoryUI.IsOpen) ||
+                (movement != null && movement.IsMovementLocked))
+            {
+                return;
+            }
+
             bool interactPressed =
                 toolbarUI.inputType == Toolbar_UI.InputType.Keyboard
                 ? Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame
-                : Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame;
+                : Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
 
             if (interactPressed)
             {
@@ -168,6 +176,7 @@ public class Player : MonoBehaviour
 
                 if (!tileManager.IsFarmTile(position))
                 {
+                    ShowInvalidFarmLocationMessage(selectedItem);
                     return;
                 }
 
@@ -193,8 +202,9 @@ public class Player : MonoBehaviour
                     return;
                 }                
 
-                if(selectedItem ==  null)
+                if(selectedItem == null || selectedItem.data == null)
                 {
+                    ShowSelectionMessage(state);
                     return;
                 }                
 
@@ -218,6 +228,18 @@ public class Player : MonoBehaviour
                             tileManager.ClearHighlight();
 
                             animator.SetTrigger("Hoe");
+                        }
+                        else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
+                        {
+                            NotificationPopup_UI.Show("Cannot plant here. Till the soil first.");
+                        }
+                        else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
+                        {
+                            NotificationPopup_UI.Show("Cannot water here.");
+                        }
+                        else
+                        {
+                            NotificationPopup_UI.Show("Select a tool.");
                         }
 
                         break;
@@ -243,8 +265,20 @@ public class Player : MonoBehaviour
                                 );
                                 toolbarUI.Refresh();
                             }
+                            else
+                            {
+                                NotificationPopup_UI.Show("Cannot plant here.");
+                            }
 
                             
+                        }
+                        else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
+                        {
+                            NotificationPopup_UI.Show("Cannot water here.");
+                        }
+                        else
+                        {
+                            NotificationPopup_UI.Show("Select a seed.");
                         }
 
                         break;
@@ -267,12 +301,71 @@ public class Player : MonoBehaviour
                             tileManager.ClearHighlight();
 
                             animator.SetTrigger("Water");
-                        }                        
+                        }
+                        else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
+                        {
+                            NotificationPopup_UI.Show("Cannot plant here.");
+                        }
+                        else
+                        {
+                            NotificationPopup_UI.Show("Select the watering can.");
+                        }
 
-                        break;                    
+                        break;
+
+                    case TileManager.FarmState.Watered:
+                        if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
+                        {
+                            NotificationPopup_UI.Show("This crop is already watered.");
+                        }
+                        else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
+                        {
+                            NotificationPopup_UI.Show("Cannot plant here.");
+                        }
+
+                        break;
                 }
             }              
 
+        }
+    }
+
+    private void ShowSelectionMessage(TileManager.FarmState state)
+    {
+        switch (state)
+        {
+            case TileManager.FarmState.Plowed:
+                NotificationPopup_UI.Show("Select a seed.");
+                break;
+
+            case TileManager.FarmState.Growing:
+                NotificationPopup_UI.Show("Select the watering can.");
+                break;
+
+            case TileManager.FarmState.Empty:
+                NotificationPopup_UI.Show("Select a tool.");
+                break;
+        }
+    }
+
+    private void ShowInvalidFarmLocationMessage(Item selectedItem)
+    {
+        if (selectedItem == null || selectedItem.data == null)
+        {
+            return;
+        }
+
+        if (selectedItem.data.itemType == ItemData.ItemType.Seed)
+        {
+            NotificationPopup_UI.Show("Cannot plant here.");
+        }
+        else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
+        {
+            NotificationPopup_UI.Show("Cannot water here.");
+        }
+        else if(selectedItem.data.toolType == ItemData.ToolType.Hoe)
+        {
+            NotificationPopup_UI.Show("Cannot use that tool here.");
         }
     }
 

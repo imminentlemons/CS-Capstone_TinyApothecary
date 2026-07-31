@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PotionBook_UI : MonoBehaviour
@@ -30,6 +31,7 @@ public class PotionBook_UI : MonoBehaviour
     private BrewingStation activeStation;
     private Player activePlayer;
     private int recipeIndex;
+    private int openedFrame;
 
     public bool IsOpen =>
         bookPanel != null && bookPanel.activeSelf;
@@ -37,6 +39,34 @@ public class PotionBook_UI : MonoBehaviour
     private void Start()
     {
         bookPanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!IsOpen || Time.frameCount == openedFrame || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            Close();
+            return;
+        }
+
+        if (Keyboard.current.aKey.wasPressedThisFrame)
+        {
+            PreviousRecipe();
+        }
+        else if (Keyboard.current.dKey.wasPressedThisFrame)
+        {
+            NextRecipe();
+        }
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            BrewCurrentRecipe();
+        }
     }
 
     public void Open(BrewingStation station, Player player)
@@ -49,6 +79,7 @@ public class PotionBook_UI : MonoBehaviour
         activeStation = station;
         activePlayer = player;
         recipeIndex = 0;
+        openedFrame = Time.frameCount;
 
         activePlayer.GetComponent<PlayerMovement>().SetMovementLocked(true);
 

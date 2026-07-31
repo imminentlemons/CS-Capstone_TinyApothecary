@@ -19,9 +19,19 @@ public class Storage_UI : MonoBehaviour
 
     private Slot_UI selectedSlot;
     private int currentSlot;
+    private int currentToolbarSlot;
     private float nextMoveTime;
+    private int openedFrame;
 
     private const int columns = 5;
+
+    private enum StorageArea
+    {
+        Storage,
+        Toolbar
+    }
+
+    private StorageArea currentArea;
 
     public bool IsOpen =>
         storagePanel != null && storagePanel.activeSelf;
@@ -43,8 +53,16 @@ public class Storage_UI : MonoBehaviour
         storagePanel.SetActive(true);
         storagePanel.transform.SetAsLastSibling();
 
-        SelectSlot(0);
+        currentArea = StorageArea.Storage;
+        currentToolbarSlot = activePlayer.toolbarUI.CurrentSlotIndex;
+        nextMoveTime = 0f;
+        openedFrame = Time.frameCount;
+
+        activePlayer.toolbarUI.enabled = false;
+
+        SelectStorageSlot(0);
         Refresh();
+        RefreshSelectors();
     }
 
     public void Close()
@@ -55,6 +73,9 @@ public class Storage_UI : MonoBehaviour
         if (activePlayer != null)
         {
             activePlayer.GetComponent<PlayerMovement>().SetMovementLocked(false);
+            activePlayer.toolbarUI.enabled = true;
+            ClearSelectors();
+            activePlayer.toolbarUI.SetGameplaySelectorVisible(true);
         }
         activePlayer = null;
         storageInventory = null;
@@ -63,6 +84,11 @@ public class Storage_UI : MonoBehaviour
     private void Update()
     {
         if(!IsOpen)
+        {
+            return;
+        }
+
+        if (Time.frameCount == openedFrame)
         {
             return;
         }
@@ -87,6 +113,12 @@ public class Storage_UI : MonoBehaviour
         if(Time.time >= nextMoveTime)
         {
             Vector2 input = Gamepad.current.leftStick.ReadValue();
+            Vector2 dpad = Gamepad.current.dpad.ReadValue();
+
+            if (dpad.sqrMagnitude > input.sqrMagnitude)
+            {
+                input = dpad;
+            }
 
             if (input.x > 0.5f)
             {
@@ -106,16 +138,14 @@ public class Storage_UI : MonoBehaviour
             }
         }        
 
-        //put one selected toolbar item into selected storage slot
         if(Gamepad.current.buttonSouth.wasPressedThisFrame)
         {
-            DepositSelectedToolbarItem();
+            TransferSelectedItem();
         }
 
-        //take one selected storage item into the players backpack
         if(Gamepad.current.buttonEast.wasPressedThisFrame)
         {
-            WithdrawSelectedStorageItem();
+            Close();
         }
     }
 
@@ -145,52 +175,92 @@ public class Storage_UI : MonoBehaviour
             MoveDown();
         }
 
-        if(Keyboard.current.fKey.wasPressedThisFrame)
+        if(Keyboard.current.eKey.wasPressedThisFrame)
         {
-            DepositSelectedToolbarItem();
+            TransferSelectedItem();
         }
 
-        if(Keyboard.current.qKey.wasPressedThisFrame)
+        if(Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            WithdrawSelectedStorageItem();
+            Close();
         }
     }
 
     private void MoveRight()
     {
-        if(currentSlot % columns < columns - 1 &&
-            currentSlot + 1 < slots.Count)
+        if (currentArea == StorageArea.Toolbar)
         {
-            SelectSlot(currentSlot + 1);
-            nextMoveTime = Time.time + moveDelay;
+            if (currentToolbarSlot + 1 < activePlayer.toolbarUI.ToolbarSlots.Count)
+            {
+                currentToolbarSlot++;
+            }
         }
-    }
-    private void MoveLeft()
-    {
-        if (currentSlot % columns > 0)
+        else if(currentSlot % columns < columns - 1 &&
+                currentSlot + 1 < slots.Count)
         {
-            SelectSlot(currentSlot - 1);
-            nextMoveTime = Time.time + moveDelay;
+            currentSlot++;
         }
-    }
-    private void MoveUp()
-    {
-        if (currentSlot - columns >= 0)
-        {
-            SelectSlot(currentSlot - columns);
-            nextMoveTime = Time.time + moveDelay;
-        }
-    }
-    private void MoveDown()
-    {
-        if (currentSlot + columns < slots.Count)
-        {
-            SelectSlot(currentSlot + columns);
-            nextMoveTime = Time.time + moveDelay;
-        }
+
+        FinishNavigation();
     }
 
-    private void SelectSlot(int index)
+    private void MoveLeft()
+    {
+        if (currentArea == StorageArea.Toolbar)
+        {
+            if (currentToolbarSlot > 0)
+            {
+                currentToolbarSlot--;
+            }
+        }
+        else if (currentSlot % columns > 0)
+        {
+            currentSlot--;
+        }
+
+        FinishNavigation();
+    }
+
+    private void MoveUp()
+    {
+        if (currentArea == StorageArea.Toolbar)
+        {
+            currentArea = StorageArea.Storage;
+
+            int bottomRowStart = ((slots.Count - 1) / columns) * columns;
+            currentSlot = Mathf.Min(
+                bottomRowStart + ToolbarToStorageColumn(currentToolbarSlot),
+                slots.Count - 1);
+        }
+        else if (currentSlot - columns >= 0)
+        {
+            currentSlot -= columns;
+        }
+
+        FinishNavigation();
+    }
+
+    private void MoveDown()
+    {
+        if (currentArea == StorageArea.Toolbar)
+        {
+            return;
+        }
+
+        if (currentSlot + columns < slots.Count)
+        {
+            currentSlot += columns;
+        }
+        else
+        {
+            currentArea = StorageArea.Toolbar;
+            currentToolbarSlot = StorageToToolbarIndex(currentSlot);
+        }
+
+        FinishNavigation();
+    }
+
+    private void SelectStorageSlot(int index)
     {
         if (index < 0 || index >= slots.Count)
         {
@@ -207,10 +277,21 @@ public class Storage_UI : MonoBehaviour
         selectedSlot.SetSelector(true);
     }
 
-    private void DepositSelectedToolbarItem()
+    private void TransferSelectedItem()
+    {
+        if (currentArea == StorageArea.Toolbar)
+        {
+            DepositToolbarItem(currentToolbarSlot);
+        }
+        else
+        {
+            WithdrawSelectedStorageItem();
+        }
+    }
+
+    private void DepositToolbarItem(int toolbarIndex)
     {
         Inventory toolbar = activePlayer.inventoryManager.toolbar;
-        int toolbarIndex = toolbar.selectedSlotIndex;
 
         Inventory.Slot toolbarSlot = toolbar.slots[toolbarIndex];
 
@@ -223,7 +304,7 @@ public class Storage_UI : MonoBehaviour
 
         if (item == null || item.data.itemType != ItemData.ItemType.Ingredient)
         {
-            Debug.Log("only ingredients can be stored there");
+            NotificationPopup_UI.Show("Select an ingredient to store.");
             return;
         }
 
@@ -232,7 +313,7 @@ public class Storage_UI : MonoBehaviour
 
         if(storageIndex == -1)
         {
-            Debug.Log("Ingredient storage is full");
+            NotificationPopup_UI.Show("Storage is full.");
             return;
         }
 
@@ -241,6 +322,70 @@ public class Storage_UI : MonoBehaviour
 
         activePlayer.toolbarUI.Refresh();
         Refresh();
+    }
+
+    private void FinishNavigation()
+    {
+        nextMoveTime = Time.time + moveDelay;
+        RefreshSelectors();
+    }
+
+    private void RefreshSelectors()
+    {
+        ClearSelectors();
+
+        if (currentArea == StorageArea.Toolbar)
+        {
+            activePlayer.toolbarUI.ToolbarSlots[currentToolbarSlot].SetSelector(true);
+        }
+        else
+        {
+            selectedSlot = slots[currentSlot];
+            selectedSlot.SetSelector(true);
+        }
+    }
+
+    private void ClearSelectors()
+    {
+        foreach (Slot_UI slot in slots)
+        {
+            slot.SetSelector(false);
+        }
+
+        if (activePlayer == null || activePlayer.toolbarUI == null)
+        {
+            return;
+        }
+
+        foreach (Slot_UI slot in activePlayer.toolbarUI.ToolbarSlots)
+        {
+            slot.SetSelector(false);
+        }
+    }
+
+    private int ToolbarToStorageColumn(int toolbarIndex)
+    {
+        int toolbarCount = activePlayer.toolbarUI.ToolbarSlots.Count;
+
+        if (toolbarCount <= 1)
+        {
+            return 0;
+        }
+
+        return Mathf.RoundToInt(toolbarIndex * (columns - 1f) / (toolbarCount - 1f));
+    }
+
+    private int StorageToToolbarIndex(int storageIndex)
+    {
+        int toolbarCount = activePlayer.toolbarUI.ToolbarSlots.Count;
+
+        if (toolbarCount <= 1)
+        {
+            return 0;
+        }
+
+        int storageColumn = storageIndex % columns;
+        return Mathf.RoundToInt(storageColumn * (toolbarCount - 1f) / (columns - 1f));
     }
 
     private void WithdrawSelectedStorageItem()
@@ -268,7 +413,7 @@ public class Storage_UI : MonoBehaviour
 
         if (!activePlayer.inventoryManager.AddToToolbarThenBackpack(item))
         {
-            Debug.Log("Toolbar and backpack are full");
+            NotificationPopup_UI.Show("Backpack is full.");
             return;
         }
 

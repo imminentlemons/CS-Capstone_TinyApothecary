@@ -36,6 +36,7 @@ public class SeedShop : MonoBehaviour
     private Player activePlayer;
     private int selectedSeedIndex;
     private float nextMoveTime;
+    private int openedFrame;
 
     public bool IsOpen => shopPanel != null && shopPanel.activeSelf;
 
@@ -56,6 +57,11 @@ public class SeedShop : MonoBehaviour
     private void Update()
     {
         if(!IsOpen || activePlayer == null)
+        {
+            return;
+        }
+
+        if (Time.frameCount == openedFrame)
         {
             return;
         }
@@ -87,6 +93,7 @@ public class SeedShop : MonoBehaviour
 
         if(seedIndex < 0 || seedIndex >= seedsForSale.Count)
         {
+            NotificationPopup_UI.Show("Select a seed.");
             return false;
         }
 
@@ -94,19 +101,20 @@ public class SeedShop : MonoBehaviour
 
         if(seed == null)
         {
+            NotificationPopup_UI.Show("Select a seed.");
             return false;
         }
 
         if(!HasRoom(buyer.inventoryManager.toolbar, seed) &&
             !HasRoom(buyer.inventoryManager.backpack, seed))
         {
-            Debug.Log("P2 toolbar and backpacka are full");
+            NotificationPopup_UI.Show("Backpack is full.");
             return false;
         }
 
         if(!shopFunds.TrySpend(seed.data.price))
         {
-            Debug.Log("Not enough coins");
+            NotificationPopup_UI.Show("Not enough money.");
             return false;
         }
 
@@ -211,6 +219,7 @@ public class SeedShop : MonoBehaviour
         selectedSeedIndex = 0;
         currentFocus = ShopFocus.SeedGrid;
         nextMoveTime = 0f;
+        openedFrame = Time.frameCount;
 
         ShowSeedDetails(selectedSeedIndex);
         RefreshSelectors();

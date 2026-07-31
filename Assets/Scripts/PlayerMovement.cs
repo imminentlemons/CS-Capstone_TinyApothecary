@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastMoveDir = Vector2.down;
     private bool movementLocked;
 
+    public bool IsMovementLocked => movementLocked;
+
     private void Awake()
     {
 

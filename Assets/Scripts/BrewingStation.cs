@@ -59,7 +59,7 @@ public class BrewingStation : MonoBehaviour
 
         if (!HasIngredients(ingredientInventory, recipe))
         {
-            Debug.Log("Not enough ingredients.");
+            NotificationPopup_UI.Show("Not enough ingredients.");
             return false;
         }
 
@@ -75,7 +75,7 @@ public class BrewingStation : MonoBehaviour
         if (!HasRoom(player.inventoryManager.toolbar, potionItem) &&
             !HasRoom(player.inventoryManager.backpack, potionItem))
         {
-            Debug.Log("Toolbar and backpack are full.");
+            NotificationPopup_UI.Show("Backpack is full.");
             return false;
         }
 
@@ -230,7 +230,7 @@ public class BrewingStation : MonoBehaviour
 
         if(!player.inventoryManager.AddToToolbarThenBackpack(finishedPotion))
         {
-            Debug.Log("Make room in the toolbar or backpack first");
+            NotificationPopup_UI.Show("Backpack is full.");
             return false;
         }
 

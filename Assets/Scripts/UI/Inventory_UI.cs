@@ -89,17 +89,18 @@ public class Inventory_UI : MonoBehaviour
             {
                 currentArea = InventoryArea.Toolbar;
                 currentToolbarSlot = toolbarUI.CurrentSlotIndex;
-
-                RefreshGamepadSelector();
             }
             else
             {
-                SelectSlot(0);
+                currentArea = InventoryArea.Backpack;
+                currentSlot = 0;
             }
+
+            RefreshSelector();
         }
-        else if(inputType == Toolbar_UI.InputType.Gamepad)
+        else
         {
-            ClearGamepadSelectors();
+            ClearSelectors();
 
             //restore regular gameplay toolbar selector
             toolbarUI.SetGameplaySelectorVisible(true);
@@ -154,7 +155,7 @@ public class Inventory_UI : MonoBehaviour
         }
     }
 
-    private void MoveGamepadRight()
+    private void MoveSelectionRight()
     {
         if (currentArea == InventoryArea.Toolbar)
         {
@@ -173,10 +174,10 @@ public class Inventory_UI : MonoBehaviour
             }
         }
 
-        RefreshGamepadSelector();
+        RefreshSelector();
     }
 
-    private void MoveGamepadLeft()
+    private void MoveSelectionLeft()
     {
         if (currentArea == InventoryArea.Toolbar)
         {
@@ -193,10 +194,10 @@ public class Inventory_UI : MonoBehaviour
             }
         }
 
-        RefreshGamepadSelector();
+        RefreshSelector();
     }
 
-    private void MoveGamepadUp()
+    private void MoveSelectionUp()
     {
         if (currentArea == InventoryArea.Toolbar)
         {
@@ -220,10 +221,10 @@ public class Inventory_UI : MonoBehaviour
             currentSlot -= columns;
         }
 
-        RefreshGamepadSelector();
+        RefreshSelector();
     }
 
-    private void MoveGamepadDown()
+    private void MoveSelectionDown()
     {
         if (currentArea == InventoryArea.Toolbar)
         {
@@ -242,7 +243,7 @@ public class Inventory_UI : MonoBehaviour
                 BackpackToToolbarIndex(currentSlot);
         }
 
-        RefreshGamepadSelector();
+        RefreshSelector();
     }
 
     private void CheckGamepadControls()
@@ -272,22 +273,22 @@ public class Inventory_UI : MonoBehaviour
 
             if (navigation.x > 0.5f)
             {
-                MoveGamepadRight();
+                MoveSelectionRight();
                 moved = true;
             }
             else if (navigation.x < -0.5f)
             {
-                MoveGamepadLeft();
+                MoveSelectionLeft();
                 moved = true;
             }
             else if (navigation.y > 0.5f)
             {
-                MoveGamepadUp();
+                MoveSelectionUp();
                 moved = true;
             }
             else if (navigation.y < -0.5f)
             {
-                MoveGamepadDown();
+                MoveSelectionDown();
                 moved = true;
             }
 
@@ -304,39 +305,67 @@ public class Inventory_UI : MonoBehaviour
             TransferSelectedItem();
         }
 
-        // Keep the existing B-to-drop behavior only
-        // while the selector is in the backpack.
-        if (gamepad.buttonEast.wasPressedThisFrame &&
+        // X is the contextual secondary action: drop the selected stack.
+        if (gamepad.buttonWest.wasPressedThisFrame &&
             currentArea == InventoryArea.Backpack)
         {
             Remove();
+        }
+
+        if (gamepad.buttonEast.wasPressedThisFrame)
+        {
+            CloseInventory();
         }
     }
 
     private void CheckKeyboardControls()
     {
+        if (Keyboard.current == null)
+        {
+            return;
+        }
+
         if (Keyboard.current.wKey.wasPressedThisFrame)
         {
-            MoveUp();
+            MoveSelectionUp();
         }
 
         if (Keyboard.current.sKey.wasPressedThisFrame)
         {
-            MoveDown();
+            MoveSelectionDown();
         }
 
         if (Keyboard.current.aKey.wasPressedThisFrame)
         {
-            MoveLeft();
+            MoveSelectionLeft();
         }
 
         if (Keyboard.current.dKey.wasPressedThisFrame)
         {
-            MoveRight();
+            MoveSelectionRight();
         }
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
-            MoveToToolbar();
+            TransferSelectedItem();
+        }
+
+        if (Keyboard.current.deleteKey.wasPressedThisFrame &&
+            currentArea == InventoryArea.Backpack)
+        {
+            Remove();
+        }
+
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            CloseInventory();
+        }
+    }
+
+    private void CloseInventory()
+    {
+        if (IsOpen)
+        {
+            ToggleInventory();
         }
     }
 
@@ -388,7 +417,7 @@ public class Inventory_UI : MonoBehaviour
 
         if(!toolbar.Add(item))
         {
-            Debug.Log("Toolbar is full");
+            NotificationPopup_UI.Show("Toolbar is full.");
             return;
         }        
 
@@ -581,9 +610,9 @@ public class Inventory_UI : MonoBehaviour
         );
     }
 
-    private void RefreshGamepadSelector()
+    private void RefreshSelector()
     {
-        ClearGamepadSelectors();
+        ClearSelectors();
 
         if (currentArea == InventoryArea.Toolbar)
         {
@@ -598,7 +627,7 @@ public class Inventory_UI : MonoBehaviour
         }
     }
 
-    private void ClearGamepadSelectors()
+    private void ClearSelectors()
     {
         foreach (Slot_UI slot in slots)
         {
@@ -649,7 +678,11 @@ public class Inventory_UI : MonoBehaviour
         // or first empty destination slot.
         if (!destinationInventory.Add(item))
         {
-            Debug.Log("Destination inventory is full");
+            string message = currentArea == InventoryArea.Toolbar
+                ? "Backpack is full."
+                : "Toolbar is full.";
+
+            NotificationPopup_UI.Show(message);
             return;
         }
 

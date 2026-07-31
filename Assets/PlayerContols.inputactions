@@ -170,7 +170,7 @@
                 {
                     "name": "",
                     "id": "2f6b0d57-1ba7-4046-a825-9b1548bfd0c1",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -181,7 +181,7 @@
                 {
                     "name": "",
                     "id": "7780142d-41e9-4886-8106-12bb7e0d237a",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",

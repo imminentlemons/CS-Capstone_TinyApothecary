@@ -96,6 +96,11 @@ public class Toolbar_UI : MonoBehaviour
 
     private void CheckAlphaNumbericKeys()
     {
+        if (Keyboard.current == null)
+        {
+            return;
+        }
+
         if(Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             SelectSlot(0);
@@ -131,9 +136,18 @@ public class Toolbar_UI : MonoBehaviour
             SelectSlot(6);
         }
 
-        if (Keyboard.current.rKey.wasPressedThisFrame)
+        if (Mouse.current != null)
         {
-            MoveSelectedToBackpack();
+            float scroll = Mouse.current.scroll.ReadValue().y;
+
+            if (scroll > 0f)
+            {
+                PreviousSlot();
+            }
+            else if (scroll < 0f)
+            {
+                NextSlot();
+            }
         }
     }
 
@@ -152,10 +166,6 @@ public class Toolbar_UI : MonoBehaviour
         if(Gamepad.current.rightTrigger.wasPressedThisFrame)
         {
             NextSlot();
-        }
-        if (Gamepad.current.buttonEast.wasPressedThisFrame)
-        {
-            MoveSelectedToBackpack();
         }
     }
 
@@ -319,7 +329,7 @@ public class Toolbar_UI : MonoBehaviour
 
         if(!backpackHasRoom)
         {
-            Debug.Log("backpack is full");
+            NotificationPopup_UI.Show("Backpack is full.");
             return;
         }
 

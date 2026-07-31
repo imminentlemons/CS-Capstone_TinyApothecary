@@ -19,6 +19,10 @@ public class Collectable : MonoBehaviour
                     player.inventoryUI.Refresh();
                     Destroy(gameObject);
                 }
+                else
+                {
+                    NotificationPopup_UI.Show("Backpack is full.");
+                }
             }            
         }
     }
