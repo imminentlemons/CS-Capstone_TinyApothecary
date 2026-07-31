@@ -56,10 +56,12 @@ public class PotionBook_UI : MonoBehaviour
 
         if (Keyboard.current.aKey.wasPressedThisFrame)
         {
+            PlayPageTurnIfAvailable();
             PreviousRecipe();
         }
         else if (Keyboard.current.dKey.wasPressedThisFrame)
         {
+            PlayPageTurnIfAvailable();
             NextRecipe();
         }
 
@@ -91,6 +93,7 @@ public class PotionBook_UI : MonoBehaviour
 
     public void Close()
     {
+        AudioManager.PlayCloseUI();
         bookPanel.SetActive(false);
 
         if(activePlayer != null)
@@ -128,6 +131,14 @@ public class PotionBook_UI : MonoBehaviour
         }
 
         Refresh();
+    }
+
+    private void PlayPageTurnIfAvailable()
+    {
+        if(activeStation != null && activeStation.Recipes.Count > 1)
+        {
+            AudioManager.PlayPageTurn();
+        }
     }
 
     public void BrewCurrentRecipe()

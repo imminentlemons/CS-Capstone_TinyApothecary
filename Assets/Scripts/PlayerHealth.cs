@@ -80,6 +80,7 @@ public class PlayerHealth : MonoBehaviour
         nextRegenerationTime = Time.time + regenerationDelay;
 
         healthUI.SetHealth(currentHealth);
+        AudioManager.PlayPlayerDamage();
 
         Debug.Log($"P2 took {damage} damage." +
             $"{currentHealth}/{maxHealth} HP remaining.");

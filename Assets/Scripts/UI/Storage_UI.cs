@@ -67,6 +67,7 @@ public class Storage_UI : MonoBehaviour
 
     public void Close()
     {
+        AudioManager.PlayCloseUI();
         storagePanel.SetActive(false);
 
         openedStorage = null;
@@ -304,7 +305,7 @@ public class Storage_UI : MonoBehaviour
 
         if (item == null || item.data.itemType != ItemData.ItemType.Ingredient)
         {
-            NotificationPopup_UI.Show("Select an ingredient to store.");
+            NotificationPopup_UI.Show(activePlayer, "Select an ingredient to store.");
             return;
         }
 
@@ -313,7 +314,7 @@ public class Storage_UI : MonoBehaviour
 
         if(storageIndex == -1)
         {
-            NotificationPopup_UI.Show("Storage is full.");
+            NotificationPopup_UI.Show(activePlayer, "Storage is full.");
             return;
         }
 
@@ -413,7 +414,7 @@ public class Storage_UI : MonoBehaviour
 
         if (!activePlayer.inventoryManager.AddToToolbarThenBackpack(item))
         {
-            NotificationPopup_UI.Show("Backpack is full.");
+            NotificationPopup_UI.Show(activePlayer, "Backpack is full.");
             return;
         }
 

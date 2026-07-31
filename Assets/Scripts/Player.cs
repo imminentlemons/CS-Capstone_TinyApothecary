@@ -1,4 +1,5 @@
 using System.Globalization;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,10 @@ public class Player : MonoBehaviour
     [SerializeField, Min(0.1f)] private float axeRange = 0.55f;
     [SerializeField, Min(0)] private float axeForwardOffset = 0.65f;
     [SerializeField] private LayerMask enemyLayer;
+
+    [Header("Interaction")]
+    [SerializeField, Min(0.1f)] private float interactionDistance = 0.8f;
+    [SerializeField, Min(0.1f)] private float interactionRadius = 0.55f;
 
     private Vector3Int pendingWaterPosition;
     private Vector2 pendingWaterDirection;
@@ -36,6 +41,14 @@ public class Player : MonoBehaviour
     private Vector3Int pendingPlowPosition;
     private bool hasPendingPlow;
     private bool isUsingTool;
+
+    public enum PlayerSide
+    {
+        Left,
+        Right
+    }
+
+    public PlayerSide notificationSide;
 
 
     private void Start()
@@ -74,8 +87,8 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            // Modal panels and shops lock movement. Do not let the same button
-            // also trigger a world interaction behind the open panel.
+            // nodal panels and shops lock movement and do not let the same button
+            // also trigger world interaction behind the open panel.
             if ((inventoryUI != null && inventoryUI.IsOpen) ||
                 (movement != null && movement.IsMovementLocked))
             {
@@ -95,58 +108,57 @@ public class Player : MonoBehaviour
 
                 Vector3Int position = tileManager.WorldToCell(targetPosition);
 
-                Collider2D hit = Physics2D.OverlapCircle(targetPosition, 0.35f);
-                IngredientStorage storage = hit != null
-                    ? hit.GetComponent<IngredientStorage>()
-                    : null;                                
+                Vector2 interactionDirection = direction.normalized;
+
+                Vector2 interactionCenter = (Vector2)transform.position +
+                    interactionDirection * interactionDistance;
+
+                Collider2D[] interactionHits = Physics2D.OverlapCircleAll(interactionCenter, interactionRadius);
+
+                IngredientStorage storage = FindInteractable<IngredientStorage>(interactionHits);
 
                 if (storage != null)
                 {
-                    if (storage != null)
-                    {
-                        storageUI.Open(storage, this);
-                        return;
-                    }
-
+                    storageUI.Open(storage, this);
                     return;
                 }
 
-                BrewingStation brewingStation = hit != null
-                    ? hit.GetComponent<BrewingStation>()
-                    : null;
+                BrewingStation brewingStation =
+                    FindInteractable<BrewingStation>(interactionHits);
 
                 if (brewingStation != null)
                 {
-                   //p2 has no potionbookUI, only p1 uses cauldrons
-                   if(potionBookUI == null)
+                    // P2 has no potionBookUI; only P1 uses cauldrons.
+                    if (potionBookUI == null)
                     {
                         return;
                     }
 
-                   if(brewingStation.IsReady)
+                    if (brewingStation.IsReady)
                     {
                         brewingStation.Collect(this);
                     }
-                   else if(!brewingStation.IsBrewing)
+                    else if (!brewingStation.IsBrewing)
                     {
                         potionBookUI.Open(brewingStation, this);
                     }
+
                     return;
                 }
 
-                Customer customer = hit != null ? hit.GetComponent<Customer>() : null;
+                Customer customer =
+                    FindInteractable<Customer>(interactionHits);
 
-                if(customer != null)
+                if (customer != null)
                 {
                     customer.Interact(this);
                     return;
                 }
 
-                SeedShop seedShop = hit != null
-                    ? hit.GetComponent<SeedShop>()
-                    : null;
+                SeedShop seedShop =
+                    FindInteractable<SeedShop>(interactionHits);
 
-                if(seedShop != null)
+                if (seedShop != null)
                 {
                     seedShop.Open(this);
                     return;
@@ -231,15 +243,15 @@ public class Player : MonoBehaviour
                         }
                         else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
                         {
-                            NotificationPopup_UI.Show("Cannot plant here. Till the soil first.");
+                            NotificationPopup_UI.Show(this, "Cannot plant here. Till the soil first.");
                         }
                         else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
                         {
-                            NotificationPopup_UI.Show("Cannot water here.");
+                            NotificationPopup_UI.Show(this, "Cannot water here.");
                         }
                         else
                         {
-                            NotificationPopup_UI.Show("Select a tool.");
+                            NotificationPopup_UI.Show(this, "Select a tool.");
                         }
 
                         break;
@@ -267,18 +279,18 @@ public class Player : MonoBehaviour
                             }
                             else
                             {
-                                NotificationPopup_UI.Show("Cannot plant here.");
+                                NotificationPopup_UI.Show(this, "Cannot plant here.");
                             }
 
                             
                         }
                         else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
                         {
-                            NotificationPopup_UI.Show("Cannot water here.");
+                            NotificationPopup_UI.Show(this, "Cannot water here.");
                         }
                         else
                         {
-                            NotificationPopup_UI.Show("Select a seed.");
+                            NotificationPopup_UI.Show(this, "Select a seed.");
                         }
 
                         break;
@@ -304,11 +316,11 @@ public class Player : MonoBehaviour
                         }
                         else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
                         {
-                            NotificationPopup_UI.Show("Cannot plant here.");
+                            NotificationPopup_UI.Show(this, "Cannot plant here.");
                         }
                         else
                         {
-                            NotificationPopup_UI.Show("Select the watering can.");
+                            NotificationPopup_UI.Show(this, "Select the watering can.");
                         }
 
                         break;
@@ -316,11 +328,11 @@ public class Player : MonoBehaviour
                     case TileManager.FarmState.Watered:
                         if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
                         {
-                            NotificationPopup_UI.Show("This crop is already watered.");
+                            NotificationPopup_UI.Show(this, "This crop is already watered.");
                         }
                         else if(selectedItem.data.itemType == ItemData.ItemType.Seed)
                         {
-                            NotificationPopup_UI.Show("Cannot plant here.");
+                            NotificationPopup_UI.Show(this, "Cannot plant here.");
                         }
 
                         break;
@@ -330,20 +342,40 @@ public class Player : MonoBehaviour
         }
     }
 
+    private static T FindInteractable<T>(Collider2D[] hits) where T : Component
+    {
+        foreach (Collider2D hit in hits)
+        {
+            if (hit == null)
+            {
+                continue;
+            }
+
+            T interactable = hit.GetComponentInParent<T>();
+
+            if (interactable != null)
+            {
+                return interactable;
+            }
+        }
+
+        return null;
+    }
+
     private void ShowSelectionMessage(TileManager.FarmState state)
     {
         switch (state)
         {
             case TileManager.FarmState.Plowed:
-                NotificationPopup_UI.Show("Select a seed.");
+                NotificationPopup_UI.Show(this, "Select a seed.");
                 break;
 
             case TileManager.FarmState.Growing:
-                NotificationPopup_UI.Show("Select the watering can.");
+                NotificationPopup_UI.Show(this, "Select the watering can.");
                 break;
 
             case TileManager.FarmState.Empty:
-                NotificationPopup_UI.Show("Select a tool.");
+                NotificationPopup_UI.Show(this, "Select a tool.");
                 break;
         }
     }
@@ -357,15 +389,15 @@ public class Player : MonoBehaviour
 
         if (selectedItem.data.itemType == ItemData.ItemType.Seed)
         {
-            NotificationPopup_UI.Show("Cannot plant here.");
+            NotificationPopup_UI.Show(this, "Cannot plant here.");
         }
         else if(selectedItem.data.toolType == ItemData.ToolType.WateringCan)
         {
-            NotificationPopup_UI.Show("Cannot water here.");
+            NotificationPopup_UI.Show(this, "Cannot water here.");
         }
         else if(selectedItem.data.toolType == ItemData.ToolType.Hoe)
         {
-            NotificationPopup_UI.Show("Cannot use that tool here.");
+            NotificationPopup_UI.Show(this, "Cannot use that tool here.");
         }
     }
 
@@ -389,6 +421,7 @@ public class Player : MonoBehaviour
         tileManager.ClearHighlight();
 
         animator.SetTrigger("Axe");
+        AudioManager.PlayAxeSwing();
     }
        
     public void DropItem(Item item)
@@ -489,6 +522,7 @@ public class Player : MonoBehaviour
         if (canStillPlow)
         {
             tileManager.Plow(pendingPlowPosition);
+            AudioManager.PlayHoeImpact();
         }
 
         hasPendingPlow = false;
@@ -508,6 +542,8 @@ public class Player : MonoBehaviour
 
         if(canStillWater && tileManager.Water(pendingWaterPosition))
         {
+            AudioManager.PlayWaterCrop();
+
             if(waterSplashPrefab != null)
             {
                 Vector3 splashPostion = tileManager.GetCellCenterWorld(pendingWaterPosition);

@@ -295,7 +295,7 @@ public class Customer : MonoBehaviour
 
         if(selectedSlot.IsEmpty)
         {
-            NotificationPopup_UI.Show("Select the customer's potion.");
+            NotificationPopup_UI.Show(player, "Select the customer's potion.");
             return false;
         }
 
@@ -303,7 +303,7 @@ public class Customer : MonoBehaviour
 
         if(!CurrentOrder.isCorrectPotion(selectedItem))
         {
-            NotificationPopup_UI.Show("That is not the correct potion.");
+            NotificationPopup_UI.Show(player, "That is not the correct potion.");
             return false;
         }
 
@@ -401,6 +401,7 @@ public class Customer : MonoBehaviour
         if(shopFunds != null)
         {
             shopFunds.AddCoins(CurrentOrder.reward);
+            AudioManager.PlayCoinSale();
         }
 
         Debug.Log(

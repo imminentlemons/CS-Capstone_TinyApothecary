@@ -100,6 +100,7 @@ public class Inventory_UI : MonoBehaviour
         }
         else
         {
+            AudioManager.PlayCloseUI();
             ClearSelectors();
 
             //restore regular gameplay toolbar selector
@@ -417,7 +418,7 @@ public class Inventory_UI : MonoBehaviour
 
         if(!toolbar.Add(item))
         {
-            NotificationPopup_UI.Show("Toolbar is full.");
+            NotificationPopup_UI.Show(ownerPlayer, "Toolbar is full.");
             return;
         }        
 
@@ -464,6 +465,7 @@ public class Inventory_UI : MonoBehaviour
                 inventory.Remove(slotToRemove.slotID, amount);
             }
 
+            AudioManager.PlayDropItem();
             Refresh();
         }
     }
@@ -682,7 +684,7 @@ public class Inventory_UI : MonoBehaviour
                 ? "Backpack is full."
                 : "Toolbar is full.";
 
-            NotificationPopup_UI.Show(message);
+            NotificationPopup_UI.Show(ownerPlayer, message);
             return;
         }
 

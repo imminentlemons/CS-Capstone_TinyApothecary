@@ -21,7 +21,7 @@ public class Collectable : MonoBehaviour
                 }
                 else
                 {
-                    NotificationPopup_UI.Show("Backpack is full.");
+                    NotificationPopup_UI.Show(player, "Backpack is full.");
                 }
             }            
         }

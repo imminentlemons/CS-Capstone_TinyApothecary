@@ -93,7 +93,7 @@ public class SeedShop : MonoBehaviour
 
         if(seedIndex < 0 || seedIndex >= seedsForSale.Count)
         {
-            NotificationPopup_UI.Show("Select a seed.");
+            NotificationPopup_UI.Show(buyer, "Select a seed.");
             return false;
         }
 
@@ -101,20 +101,20 @@ public class SeedShop : MonoBehaviour
 
         if(seed == null)
         {
-            NotificationPopup_UI.Show("Select a seed.");
+            NotificationPopup_UI.Show(buyer, "Select a seed.");
             return false;
         }
 
         if(!HasRoom(buyer.inventoryManager.toolbar, seed) &&
             !HasRoom(buyer.inventoryManager.backpack, seed))
         {
-            NotificationPopup_UI.Show("Backpack is full.");
+            NotificationPopup_UI.Show(buyer, "Backpack is full.");
             return false;
         }
 
         if(!shopFunds.TrySpend(seed.data.price))
         {
-            NotificationPopup_UI.Show("Not enough money.");
+            NotificationPopup_UI.Show(buyer, "Not enough money.");
             return false;
         }
 
@@ -122,6 +122,8 @@ public class SeedShop : MonoBehaviour
 
         buyer.toolbarUI.Refresh();
         buyer.inventoryUI.Refresh();
+
+        AudioManager.PlaySellBuyItem();
 
         Debug.Log("Bought " + seed.data.itemName);
         return true;
@@ -227,6 +229,7 @@ public class SeedShop : MonoBehaviour
 
     public void Close()
     {
+        AudioManager.PlayCloseUI();
         shopPanel.SetActive(false);
         HideAllSelectors();
 

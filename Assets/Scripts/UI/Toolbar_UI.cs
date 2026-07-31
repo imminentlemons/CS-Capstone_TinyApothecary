@@ -329,7 +329,7 @@ public class Toolbar_UI : MonoBehaviour
 
         if(!backpackHasRoom)
         {
-            NotificationPopup_UI.Show("Backpack is full.");
+            NotificationPopup_UI.Show(player, "Backpack is full.");
             return;
         }
 

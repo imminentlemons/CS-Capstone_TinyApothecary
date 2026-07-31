@@ -222,6 +222,7 @@ MonoBehaviour:
   maxHealth: 3
   spriteRenderer: {fileID: 0}
   animator: {fileID: 0}
+  enemyType: 1
   hitFlashColor: {r: 1, g: 1, b: 1, a: 0.35}
   hitFlashDuration: 0.12
 --- !u!114 &993799698494839322

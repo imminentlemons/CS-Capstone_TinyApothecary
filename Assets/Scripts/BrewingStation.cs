@@ -59,7 +59,7 @@ public class BrewingStation : MonoBehaviour
 
         if (!HasIngredients(ingredientInventory, recipe))
         {
-            NotificationPopup_UI.Show("Not enough ingredients.");
+            NotificationPopup_UI.Show(player, "Not enough ingredients.");
             return false;
         }
 
@@ -75,7 +75,7 @@ public class BrewingStation : MonoBehaviour
         if (!HasRoom(player.inventoryManager.toolbar, potionItem) &&
             !HasRoom(player.inventoryManager.backpack, potionItem))
         {
-            NotificationPopup_UI.Show("Backpack is full.");
+            NotificationPopup_UI.Show(player, "Backpack is full.");
             return false;
         }
 
@@ -89,6 +89,7 @@ public class BrewingStation : MonoBehaviour
 
 
         StartCoroutine(BrewRoutine(recipe, potionItem));
+        AudioManager.PlayPotionBrewing();
         return true;
     }
 
@@ -201,6 +202,8 @@ public class BrewingStation : MonoBehaviour
         {
             checkmarkObject.SetActive(true);
         }
+
+        AudioManager.PlayPotionComplete();
         
         Debug.Log(recipe.potion.itemName + " is ready to collect.");
     }
@@ -230,12 +233,14 @@ public class BrewingStation : MonoBehaviour
 
         if(!player.inventoryManager.AddToToolbarThenBackpack(finishedPotion))
         {
-            NotificationPopup_UI.Show("Backpack is full.");
+            NotificationPopup_UI.Show(player, "Backpack is full.");
             return false;
         }
 
         player.toolbarUI.Refresh();
         player.inventoryUI.Refresh();
+
+        AudioManager.PlayCollectPotion();
 
         isReady = false;
         finishedPotion = null;

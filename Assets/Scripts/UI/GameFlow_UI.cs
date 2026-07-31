@@ -10,6 +10,8 @@ public class GameFlow_UI : MonoBehaviour
     [SerializeField] private GameObject controlScreen;
     [SerializeField] private GameObject endOfDayScreen;
     [SerializeField] private GameObject exitConfirmation;
+    [SerializeField] private GameObject pauseScreen;
+    [SerializeField] private GameObject quitToTitleConfirmation;
 
     [Header("GameSystems")]
     [SerializeField] private DayCycleManager dayCycle;
@@ -27,6 +29,7 @@ public class GameFlow_UI : MonoBehaviour
         Title,
         Controls, 
         Playing,
+        Paused,
         EndOfDay
     }
 
@@ -36,6 +39,16 @@ public class GameFlow_UI : MonoBehaviour
 
     private void Awake()
     {
+        if(pauseScreen != null)
+        {
+            pauseScreen.SetActive(false);
+        }
+
+        if(quitToTitleConfirmation != null)
+        {
+            quitToTitleConfirmation.SetActive(false);
+        }
+
         if(exitConfirmation != null)
         {
             exitConfirmation.SetActive(false);
@@ -91,6 +104,51 @@ public class GameFlow_UI : MonoBehaviour
             }
 
             return;
+        }
+
+        if(quitToTitleConfirmation != null && quitToTitleConfirmation.activeSelf)
+        {
+            bool yes = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+            bool no = (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame) ||
+                (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame);
+
+            if(yes)
+            {
+                ExitToTitle();
+            }
+            else if(no)
+            {
+                CloseQuitToTitleConfirmation();
+            }
+
+            return;
+        }
+
+        if(state == FlowState.Playing && PausePressed())
+        {
+            OpenPause();
+            return;
+        }
+
+        if(state == FlowState.Paused)
+        {
+            bool continuePressed = (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) ||
+                (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame);
+
+            bool quitPressed = Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame;
+
+            if (continuePressed)
+            {
+                ContinueGame();
+            }
+            else if(quitPressed)
+            {
+                OpenQuitToTitleConfirmation();
+            }
+
+            return;
+
         }
 
         if(BackPressed())
@@ -181,6 +239,44 @@ public class GameFlow_UI : MonoBehaviour
         ApplyState(FlowState.Playing);
     }
 
+    public void OpenPause()
+    {
+        if(state == FlowState.Playing)
+        {
+            ApplyState(FlowState.Paused);
+        }
+    }
+
+    public void ContinueGame()
+    {
+        if(state == FlowState.Paused)
+        {
+            ApplyState(FlowState.Playing);
+        }
+    }
+
+    public void OpenQuitToTitleConfirmation()
+    {
+        if(quitToTitleConfirmation == null)
+        {
+            return;
+        }
+
+        quitToTitleConfirmation.SetActive(true);
+        quitToTitleConfirmation.transform.SetAsLastSibling();
+        stateChangedFrame = Time.frameCount;
+    }
+
+    public void CloseQuitToTitleConfirmation()
+    {
+        if(quitToTitleConfirmation != null)
+        {
+            quitToTitleConfirmation.SetActive(false);
+        }
+
+        stateChangedFrame = Time.frameCount;
+    }
+
     public void ShowEndOfDay()
     {
         if (dailyStats != null)
@@ -202,6 +298,7 @@ public class GameFlow_UI : MonoBehaviour
         }
 
         ApplyState(FlowState.EndOfDay);
+        AudioManager.PlayDayEndStats();
     }
 
     public void PlayAgain()
@@ -225,11 +322,17 @@ public class GameFlow_UI : MonoBehaviour
             exitConfirmation.SetActive(false);
         }
 
+        if(quitToTitleConfirmation != null)
+        {
+            quitToTitleConfirmation.SetActive(false);
+        }
+
         state = newState;
         stateChangedFrame = Time.frameCount;
 
         titleScreen.SetActive(state == FlowState.Title);
         controlScreen.SetActive(state == FlowState.Controls);
+        pauseScreen.SetActive(state == FlowState.Paused);
         endOfDayScreen.SetActive(state == FlowState.EndOfDay);
 
         bool gameplayActive = state == FlowState.Playing;
@@ -294,6 +397,15 @@ public class GameFlow_UI : MonoBehaviour
             Gamepad.current.buttonEast.wasPressedThisFrame;
 
         return keyboardBack || gamepadBack;
+    }
+
+    private bool PausePressed()
+    {
+        bool keyboardPause = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+
+        bool gamepadPause = Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame;
+
+        return keyboardPause || gamepadPause;
     }
 
     private void OnDestroy()

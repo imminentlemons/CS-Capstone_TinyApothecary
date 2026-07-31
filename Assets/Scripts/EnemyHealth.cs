@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
+    private enum EnemyType
+    {
+        Slime,
+        Bat
+    }
+
     [Header("Health")]
     [SerializeField, Min(1)]
     private int maxHealth = 3;
@@ -14,6 +20,7 @@ public class EnemyHealth : MonoBehaviour
 
     [Header("Death")]
     [SerializeField] private Animator animator;
+    [SerializeField] private EnemyType enemyType;
 
     [SerializeField]
     private Color hitFlashColor =
@@ -80,11 +87,25 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHealth == 0)
         {
+            PlayDeathSound();
             Die();
         }
         else
         {
+            AudioManager.PlayMonsterDamage();
             PlayHitFlash();
+        }
+    }
+
+    private void PlayDeathSound()
+    {
+        if(enemyType == EnemyType.Bat)
+        {
+            AudioManager.PlayBatDeath();
+        }
+        else
+        {
+            AudioManager.PlaySlimeDeath();
         }
     }
 
