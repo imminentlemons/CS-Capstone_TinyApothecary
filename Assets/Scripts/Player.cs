@@ -1,5 +1,3 @@
-using System.Globalization;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
