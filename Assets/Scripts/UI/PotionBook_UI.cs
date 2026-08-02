@@ -43,6 +43,11 @@ public class PotionBook_UI : MonoBehaviour
 
     private void Update()
     {
+        if (GameFlow_UI.GameplayUIInputBlocked)
+        {
+            return;
+        }
+
         if (!IsOpen || Time.frameCount == openedFrame || Keyboard.current == null)
         {
             return;

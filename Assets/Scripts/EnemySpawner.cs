@@ -1,12 +1,17 @@
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("Spawn Timing")]
+    [SerializeField, Min(0f)]
+    private float firstSpawnDelay = 60f;
 
-    [Header("Wave Settings")]
-    [SerializeField, Min(1)]
-    private int maximumEnemiesPerWave = 2;
+    [SerializeField, Min(0f)]
+    private float minimumSpawnDelay = 40f;
+
+    [SerializeField, Min(0f)]
+    private float maximumSpawnDelay = 70f;
 
     [Header("Enemies")]
     [SerializeField]
@@ -27,38 +32,117 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private TileManager tileManager;
 
-    private readonly List<GameObject> activeEnemies =
-        new List<GameObject>();
-
-    private bool spawnedThisDefensePhase;
+    private GameObject activeEnemy;
+    private Coroutine spawnRoutine;
+    private bool spawningEnabled;
 
     private void OnEnable()
     {
         if (dayCycle != null)
         {
+            dayCycle.ShopOpened += HandleShopOpened;
             dayCycle.ShopClosed += HandleShopClosed;
         }
     }
 
     private void Start()
     {
-        // Supports testing when the scene starts Closed.
-        if (dayCycle != null &&
-            dayCycle.CurrentPhase == DayPhase.Closed)
+        // Supports testing when the scene begins
+        // during the Open phase.
+        if (dayCycle != null && dayCycle.IsShopOpen)
         {
-            SpawnDefenseEnemies();
+            StartSpawning(firstSpawnDelay);
         }
+    }
+
+    private void Update()
+    {
+        if (!spawningEnabled ||
+            activeEnemy != null ||
+            spawnRoutine != null ||
+            dayCycle == null ||
+            !dayCycle.IsShopOpen)
+        {
+            return;
+        }
+
+        float shortestDelay =
+            Mathf.Min(minimumSpawnDelay, maximumSpawnDelay);
+
+        float longestDelay =
+            Mathf.Max(minimumSpawnDelay, maximumSpawnDelay);
+
+        float delay =
+            Random.Range(shortestDelay, longestDelay);
+
+        ScheduleSpawn(delay);
+    }
+
+    private void HandleShopOpened()
+    {
+        StartSpawning(firstSpawnDelay);
     }
 
     private void HandleShopClosed()
     {
-        SpawnDefenseEnemies();
+        StopSpawning();
+
+        // The current enemy is deliberately left alive
+        // for players to finish during the closing period.
     }
 
-    private void SpawnDefenseEnemies()
+    private void StartSpawning(float delay)
     {
-        if (spawnedThisDefensePhase ||
-            enemyPrefabs == null ||
+        spawningEnabled = true;
+        ScheduleSpawn(delay);
+    }
+
+    private void StopSpawning()
+    {
+        spawningEnabled = false;
+
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
+    }
+
+    private void ScheduleSpawn(float delay)
+    {
+        if (!spawningEnabled ||
+            activeEnemy != null ||
+            spawnRoutine != null ||
+            dayCycle == null ||
+            !dayCycle.IsShopOpen)
+        {
+            return;
+        }
+
+        spawnRoutine =
+            StartCoroutine(SpawnAfterDelay(delay));
+    }
+
+    private IEnumerator SpawnAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        spawnRoutine = null;
+
+        if (!spawningEnabled ||
+            activeEnemy != null ||
+            dayCycle == null ||
+            !dayCycle.IsShopOpen)
+        {
+            yield break;
+        }
+
+        SpawnEnemy();
+    }
+
+    private void SpawnEnemy()
+    {
+        if (enemyPrefabs == null ||
             enemyPrefabs.Length == 0 ||
             spawnPoints == null ||
             spawnPoints.Length == 0 ||
@@ -68,82 +152,47 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        spawnedThisDefensePhase = true;
+        GameObject enemyPrefab =
+            enemyPrefabs[
+                Random.Range(0, enemyPrefabs.Length)
+            ];
 
-        int previousSpawnIndex = -1;
+        Transform spawnPoint =
+            spawnPoints[
+                Random.Range(0, spawnPoints.Length)
+            ];
 
-        int enemiesToSpawn = Mathf.Min(maximumEnemiesPerWave, enemyPrefabs.Length);
-
-        for (int i = 0; i < enemiesToSpawn; i++)
+        if (enemyPrefab == null || spawnPoint == null)
         {
-            GameObject enemyPrefab = enemyPrefabs[i];
-
-            int spawnIndex =
-                ChooseSpawnIndex(previousSpawnIndex);
-
-            previousSpawnIndex = spawnIndex;
-
-            Transform selectedSpawnPoint =
-                spawnPoints[spawnIndex];
-
-            if (selectedSpawnPoint == null)
-            {
-                continue;
-            }
-
-            GameObject enemy = Instantiate(
-                enemyPrefab,
-                selectedSpawnPoint.position,
-                selectedSpawnPoint.rotation
-            );
-
-            EnemyGardenAttack gardenAttack =
-                enemy.GetComponent<EnemyGardenAttack>();
-
-            if (gardenAttack != null)
-            {
-                gardenAttack.Initialize(
-                    tileManager,
-                    gardenTarget
-                );
-            }
-
-            activeEnemies.Add(enemy);
-
-            Debug.Log(
-                $"{enemy.name} spawned at " +
-                $"{selectedSpawnPoint.name}."
-            );
-        }
-    }
-
-    private int ChooseSpawnIndex(
-        int previousSpawnIndex)
-    {
-        int index =
-            Random.Range(0, spawnPoints.Length);
-
-        // avoids putting consecutive enemies at
-        // the same location when alternatives exist
-        if (spawnPoints.Length > 1 &&
-            index == previousSpawnIndex)
-        {
-            int offset =
-                Random.Range(1, spawnPoints.Length);
-
-            index =
-                (previousSpawnIndex + offset) %
-                spawnPoints.Length;
+            return;
         }
 
-        return index;
+        activeEnemy = Instantiate(
+            enemyPrefab,
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
+
+        EnemyGardenAttack gardenAttack =
+            activeEnemy.GetComponent<EnemyGardenAttack>();
+
+        if (gardenAttack != null)
+        {
+            gardenAttack.Initialize(
+                tileManager,
+                gardenTarget
+            );
+        }
     }
 
     private void OnDisable()
     {
         if (dayCycle != null)
         {
+            dayCycle.ShopOpened -= HandleShopOpened;
             dayCycle.ShopClosed -= HandleShopClosed;
         }
+
+        StopSpawning();
     }
 }

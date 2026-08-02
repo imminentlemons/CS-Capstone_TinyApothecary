@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
@@ -59,7 +58,11 @@ public class Toolbar_UI : MonoBehaviour
 
     private void Update()
     {
-        
+        if (GameFlow_UI.GameplayUIInputBlocked)
+        {
+            return;
+        }
+
         if (inventoryPanel != null && inventoryPanel.activeSelf)
         {
             return;

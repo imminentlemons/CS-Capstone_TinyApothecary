@@ -84,7 +84,12 @@ public class Storage_UI : MonoBehaviour
 
     private void Update()
     {
-        if(!IsOpen)
+        if (GameFlow_UI.GameplayUIInputBlocked)
+        {
+            return;
+        }
+
+        if (!IsOpen)
         {
             return;
         }

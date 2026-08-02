@@ -12,6 +12,8 @@ public class GameFlow_UI : MonoBehaviour
     [SerializeField] private GameObject exitConfirmation;
     [SerializeField] private GameObject pauseScreen;
     [SerializeField] private GameObject quitToTitleConfirmation;
+    [SerializeField] private GameObject tutorialScreen;
+    [SerializeField] private Tutorial_UI tutorialUI;
 
     [Header("GameSystems")]
     [SerializeField] private DayCycleManager dayCycle;
@@ -27,7 +29,8 @@ public class GameFlow_UI : MonoBehaviour
     private enum FlowState
     {
         Title,
-        Controls, 
+        Controls,
+        Tutorial,
         Playing,
         Paused,
         EndOfDay
@@ -37,8 +40,27 @@ public class GameFlow_UI : MonoBehaviour
     private int stateChangedFrame;
     private static bool startImmediatelyAfterReload;
 
+    public static GameFlow_UI Instance { get; private set; }
+
+    public static bool GameplayUIInputBlocked
+    {
+        get
+        {
+            if (Instance == null)
+            {
+                return false;
+            }
+
+            return Instance.state != FlowState.Playing ||
+                   Time.frameCount == Instance.stateChangedFrame ||
+                   Instance.PausePressed();
+        }
+    }
+
     private void Awake()
     {
+        Instance = this;
+
         if(pauseScreen != null)
         {
             pauseScreen.SetActive(false);
@@ -151,13 +173,17 @@ public class GameFlow_UI : MonoBehaviour
 
         }
 
-        if(BackPressed())
+        if (BackPressed())
         {
-            if(state == FlowState.Controls)
+            if (state == FlowState.Controls)
             {
                 ShowTitle();
             }
-            else if(state == FlowState.Title)
+            else if (state == FlowState.Tutorial)
+            {
+                StartGame();
+            }
+            else if (state == FlowState.Title)
             {
                 OpenExitConfirmation();
             }
@@ -165,7 +191,7 @@ public class GameFlow_UI : MonoBehaviour
             return;
         }
 
-        if(!ConfirmPressed())
+        if (!ConfirmPressed())
         {
             return;
         }
@@ -177,7 +203,14 @@ public class GameFlow_UI : MonoBehaviour
                 break;
 
             case FlowState.Controls:
-                StartGame();
+                ShowTutorial();
+                break;
+
+            case FlowState.Tutorial:
+                if (tutorialUI == null || !tutorialUI.Advance())
+                {
+                    StartGame();
+                }
                 break;
 
             case FlowState.EndOfDay:
@@ -232,6 +265,11 @@ public class GameFlow_UI : MonoBehaviour
     public void ShowControls()
     {
         ApplyState(FlowState.Controls);
+    }
+
+    public void ShowTutorial()
+    {
+        ApplyState(FlowState.Tutorial);
     }
 
     public void StartGame()
@@ -332,8 +370,29 @@ public class GameFlow_UI : MonoBehaviour
 
         titleScreen.SetActive(state == FlowState.Title);
         controlScreen.SetActive(state == FlowState.Controls);
-        pauseScreen.SetActive(state == FlowState.Paused);
-        endOfDayScreen.SetActive(state == FlowState.EndOfDay);
+
+        if (tutorialScreen != null)
+        {
+            tutorialScreen.SetActive(state == FlowState.Tutorial);
+        }
+
+        bool pauseActive = state == FlowState.Paused;
+
+        pauseScreen.SetActive(pauseActive);
+
+        if (pauseActive)
+        {
+
+            pauseScreen.transform.SetAsLastSibling();
+        }
+        bool endOfDayActive = state == FlowState.EndOfDay;
+
+        endOfDayScreen.SetActive(endOfDayActive);
+
+        if (endOfDayActive)
+        {
+            endOfDayScreen.transform.SetAsLastSibling();
+        }
 
         bool gameplayActive = state == FlowState.Playing;
 
@@ -362,14 +421,7 @@ public class GameFlow_UI : MonoBehaviour
             FindObjectsSortMode.None))
         {
             movement.enabled = enabled;
-        }
-
-        foreach(Toolbar_UI toolbar in FindObjectsByType<Toolbar_UI>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None))
-        {
-            toolbar.enabled = enabled;
-        }
+        }        
     }
 
     private bool ConfirmPressed()
@@ -410,6 +462,11 @@ public class GameFlow_UI : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+
         Time.timeScale = 1f;
     }
 

@@ -61,6 +61,11 @@ public class Inventory_UI : MonoBehaviour
 
     private void Update()
     {
+        if (GameFlow_UI.GameplayUIInputBlocked)
+        {
+            return;
+        }
+
         if (!IsOpen)
         {
             return;
@@ -573,8 +578,7 @@ public class Inventory_UI : MonoBehaviour
         }
     }
 
-    private int ToolbarToBackpackColumn(
-    int toolbarIndex)
+    private int ToolbarToBackpackColumn(int toolbarIndex)
     {
         int toolbarCount =
             toolbarUI.ToolbarSlots.Count;
@@ -591,8 +595,7 @@ public class Inventory_UI : MonoBehaviour
         );
     }
 
-    private int BackpackToToolbarIndex(
-        int backpackIndex)
+    private int BackpackToToolbarIndex(int backpackIndex)
     {
         int toolbarCount =
             toolbarUI.ToolbarSlots.Count;

@@ -62,9 +62,30 @@ public class Player : MonoBehaviour
 
     public void OnInventory()
     {
+        if (inventoryUI == null)
+        {
+            return;
+        }
+
+        // Y can always close an inventory thats already open
+        if (inventoryUI.IsOpen)
+        {
+            inventoryUI.ToggleInventory();
+            return;
+        }
+
+        // Preserve the existing behavior where Y closes storage
         if (storageUI != null && storageUI.IsOpen)
         {
             storageUI.Close();
+            return;
+        }
+
+        // Do not open inventory behind another modal UI,
+        // during an interaction, or during a tool animation
+        if ((potionBookUI != null && potionBookUI.IsOpen) ||
+           (movement != null && movement.IsMovementLocked))
+        {
             return;
         }
 

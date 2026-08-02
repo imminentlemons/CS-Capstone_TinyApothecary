@@ -6,6 +6,12 @@ public class OrderManager : MonoBehaviour
     [Header("Order Pool")]
     [SerializeField] private List<PotionRecipe> availableRecipes = new();
 
+    [Header("First Customer")]
+    [SerializeField]
+    private PotionRecipe firstCustomerRecipe;
+
+    private bool firstOrderAssigned;
+
     [Header("Customers To Start")]
     [SerializeField] private List<Customer> startingCustomers = new();
 
@@ -24,24 +30,67 @@ public class OrderManager : MonoBehaviour
 
     public void GiveNewOrder(Customer customer)
     {
-        if(customer == null || availableRecipes.Count == 0)
+        if (customer == null)
         {
             return;
         }
 
-        PotionRecipe recipe = availableRecipes[Random.Range(0, availableRecipes.Count)];
+        bool assigningFirstOrder =
+            !firstOrderAssigned &&
+            firstCustomerRecipe != null;
+
+        PotionRecipe recipe;
+
+        if (assigningFirstOrder)
+        {
+            recipe = firstCustomerRecipe;
+        }
+        else
+        {
+            if (availableRecipes == null ||
+                availableRecipes.Count == 0)
+            {
+                Debug.LogWarning(
+                    "Order Manager has no available recipes."
+                );
+
+                return;
+            }
+
+            recipe =
+                availableRecipes[
+                    Random.Range(0, availableRecipes.Count)
+                ];
+        }
 
         if (recipe == null || recipe.potion == null)
         {
-            Debug.LogWarning("Order recipe has no potion assigned.");
+            Debug.LogWarning(
+                "Order recipe has no potion assigned."
+            );
+
             return;
+        }
+
+        if (assigningFirstOrder)
+        {
+            firstOrderAssigned = true;
         }
 
         int reward = recipe.potion.price;
 
-        float patience = Random.Range(minimumPatience, maximumPatience);
+        float patience =
+            Random.Range(
+                minimumPatience,
+                maximumPatience
+            );
 
-        CustomerOrder order = new CustomerOrder(recipe, reward, patience);
+        CustomerOrder order =
+            new CustomerOrder(
+                recipe,
+                reward,
+                patience
+            );
 
         customer.SetOrder(order);
     }

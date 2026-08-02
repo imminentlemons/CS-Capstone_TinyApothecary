@@ -56,7 +56,12 @@ public class SeedShop : MonoBehaviour
 
     private void Update()
     {
-        if(!IsOpen || activePlayer == null)
+        if (GameFlow_UI.GameplayUIInputBlocked)
+        {
+            return;
+        }
+
+        if (!IsOpen || activePlayer == null)
         {
             return;
         }
